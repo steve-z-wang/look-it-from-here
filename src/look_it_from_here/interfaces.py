@@ -20,7 +20,11 @@ class WebElement(ABC):
         pass
 
     @abstractmethod
-    async def get_attribute(self, attribute: str) -> Optional[str]:
+    async def get_inner_text(self) -> Optional[str]:
+        pass
+
+    @abstractmethod
+    async def get_attributes(self) -> Dict[str, str]:
         pass
 
     @abstractmethod

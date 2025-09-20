@@ -1,17 +1,19 @@
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 import uuid
 
 
 class HTMLDisplayNode:
     def __init__(
         self,
-        role: str,
-        display_text: Optional[str] = None,
+        tag: str,
+        text: Optional[str] = None,
+        attributes: Optional[List[tuple]] = None,
         children: Optional[List['HTMLDisplayNode']] = None
     ):
         self.id = str(uuid.uuid4())
-        self.role = role
-        self.display_text = display_text or ""
+        self.tag = tag
+        self.text = text  # Keep text separate from other attributes
+        self.attributes = attributes or []  # HTML attributes (aria-label, role, type, etc.)
         self.children = children or []
         self.parent: Optional['HTMLDisplayNode'] = None
 
@@ -35,6 +37,12 @@ class HTMLDisplayNode:
         self.add_child(child)
         return self
 
+    def has_semantic_value(self) -> bool:
+        """Check if this node has semantic value (non-whitespace text or attributes)."""
+        has_text = bool(self.text and self.text.strip())
+        has_attributes = bool(self.attributes)
+        return has_text or has_attributes
+
     def copy(self, include_children: bool = True) -> 'HTMLDisplayNode':
         """
         Create a copy of this display node.
@@ -46,8 +54,9 @@ class HTMLDisplayNode:
             A new HTMLDisplayNode with the same data
         """
         new_node = HTMLDisplayNode(
-            role=self.role,
-            display_text=self.display_text
+            tag=self.tag,
+            text=self.text,
+            attributes=self.attributes.copy()
         )
         new_node.id = self.id  # Preserve the ID
 

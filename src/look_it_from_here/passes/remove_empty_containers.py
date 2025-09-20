@@ -1,8 +1,12 @@
-from typing import Optional
-from html_display_node import HTMLDisplayNode
+from typing import Optional, Set
+from ..html_display_node import HTMLDisplayNode
 
 
-def content_filter_pass(display_node: HTMLDisplayNode) -> Optional[HTMLDisplayNode]:
+# Wrapper/container tags that should be filtered out when they have no meaningful content
+FILTERABLE_TAGS: Set[str] = {'div', 'span'}
+
+
+def remove_empty_containers_pass(display_node: HTMLDisplayNode) -> Optional[HTMLDisplayNode]:
     """
     Filter out DisplayNodes that have no meaningful content.
 
@@ -22,18 +26,18 @@ def content_filter_pass(display_node: HTMLDisplayNode) -> Optional[HTMLDisplayNo
     # Process children first (bottom-up), keeping only those with content
     meaningful_children = []
     for child in display_node.children:
-        meaningful_child = content_filter_pass(child)
+        meaningful_child = remove_empty_containers_pass(child)
         if meaningful_child:
             meaningful_children.append(meaningful_child)
 
-    # Check if this node has meaningful text content
-    has_meaningful_text = bool(display_node.display_text and display_node.display_text.strip())
+    # Check if this node has meaningful content
+    has_text = display_node.text is not None and display_node.text.strip()
+    has_attributes = len(display_node.attributes) > 0
+    has_meaningful_content = has_text or has_attributes or len(meaningful_children) > 0
 
-    # This node has meaningful content if it has text OR meaningful children
-    has_meaningful_content = has_meaningful_text or len(meaningful_children) > 0
-
-    # If this node has no meaningful content, filter it out
-    if not has_meaningful_content:
+    # Only filter out nodes that are filterable tags AND have no meaningful content
+    # Non-filterable tags (like img, button, etc.) are always preserved
+    if display_node.tag in FILTERABLE_TAGS and not has_meaningful_content:
         return None
 
     # Create a copy without children first

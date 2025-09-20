@@ -1,8 +1,8 @@
 from typing import Dict, Optional, Any
-from html_tree_node import HTMLTreeNode
-from html_display_node import HTMLDisplayNode
-from interfaces import WebElement, Snapshot
-from pipeline import display_tree_to_dict
+from .html_tree_node import HTMLTreeNode
+from .html_display_node import HTMLDisplayNode
+from .interfaces import WebElement, Snapshot
+from .pipeline import display_tree_to_dict, display_tree_to_xml
 
 
 class WebSnapshot(Snapshot):
@@ -36,7 +36,20 @@ class WebSnapshot(Snapshot):
         Returns:
             Dictionary with role, text, and children fields
         """
-        return display_tree_to_dict(self.semantic_tree)
+        if self.semantic_tree:
+            return display_tree_to_dict(self.semantic_tree)
+        return None
+
+    def to_xml(self) -> Optional[str]:
+        """
+        Convert the semantic tree to XML representation.
+
+        Returns:
+            XML string representation or None if no semantic tree
+        """
+        if self.semantic_tree:
+            return display_tree_to_xml(self.semantic_tree)
+        return None
 
     def get_element(self, display_node_id: str) -> Optional[WebElement]:
         """

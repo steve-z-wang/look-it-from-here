@@ -1,8 +1,8 @@
 from typing import Optional
-from html_tree_node import HTMLTreeNode
+from ..html_tree_node import HTMLTreeNode
 
 
-def filter_invisible(node: HTMLTreeNode) -> Optional[HTMLTreeNode]:
+def filter_hidden_elements_pass(node: HTMLTreeNode) -> Optional[HTMLTreeNode]:
     """
     Filter out invisible nodes from the tree.
     Returns None if the node is invisible, otherwise returns a copy with only visible children.
@@ -22,7 +22,7 @@ def filter_invisible(node: HTMLTreeNode) -> Optional[HTMLTreeNode]:
 
     # Only add visible children recursively
     for child in node.children:
-        filtered_child = filter_invisible(child)
+        filtered_child = filter_hidden_elements_pass(child)
         if filtered_child is not None:
             filtered_node.add_child(filtered_child)
 

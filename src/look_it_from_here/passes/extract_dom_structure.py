@@ -1,10 +1,10 @@
 import asyncio
 from typing import Dict, Tuple
-from html_tree_node import HTMLTreeNode
-from interfaces import WebPage, WebElement
+from ..html_tree_node import HTMLTreeNode
+from ..interfaces import WebPage, WebElement
 
 
-async def build_dom_tree(page: WebPage) -> Tuple[HTMLTreeNode, Dict[str, WebElement]]:
+async def extract_dom_structure(page: WebPage) -> Tuple[HTMLTreeNode, Dict[str, WebElement]]:
     """
     Build DOM tree using DFS with parallelization at each level.
     Returns tuple of (tree_root, id_to_element_mapping)
@@ -22,28 +22,13 @@ async def build_dom_tree(page: WebPage) -> Tuple[HTMLTreeNode, Dict[str, WebElem
         children_task = element.get_children()
         is_visible_task = element.is_visible()
 
-        # Get common attributes in parallel
-        id_attr_task = element.get_attribute("id")
-        class_attr_task = element.get_attribute("class")
-        name_attr_task = element.get_attribute("name")
-        type_attr_task = element.get_attribute("type")
+        # Get ALL attributes from the element
+        attributes_task = element.get_attributes()
 
         # Wait for all data
-        tag, text, children, is_visible, id_attr, class_attr, name_attr, type_attr = await asyncio.gather(
-            tag_task, text_task, children_task, is_visible_task,
-            id_attr_task, class_attr_task, name_attr_task, type_attr_task
+        tag, text, children, is_visible, attributes = await asyncio.gather(
+            tag_task, text_task, children_task, is_visible_task, attributes_task
         )
-
-        # Build attributes dict
-        attributes = {}
-        if id_attr:
-            attributes["id"] = id_attr
-        if class_attr:
-            attributes["class"] = class_attr
-        if name_attr:
-            attributes["name"] = name_attr
-        if type_attr:
-            attributes["type"] = type_attr
 
         # Create tree node
         tree_node = HTMLTreeNode(
