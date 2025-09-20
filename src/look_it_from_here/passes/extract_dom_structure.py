@@ -1,10 +1,10 @@
 import asyncio
 from typing import Dict, Tuple
-from ..html_tree_node import HTMLTreeNode
+from ..dom_node import DOMElementNode, DOMTextNode
 from ..interfaces import WebPage, WebElement
 
 
-async def extract_dom_structure(page: WebPage) -> Tuple[HTMLTreeNode, Dict[str, WebElement]]:
+async def extract_dom_structure(page: WebPage) -> Tuple[DOMElementNode, Dict[str, WebElement]]:
     """
     Build DOM tree using DFS with parallelization at each level.
     Returns tuple of (tree_root, id_to_element_mapping)
@@ -15,10 +15,9 @@ async def extract_dom_structure(page: WebPage) -> Tuple[HTMLTreeNode, Dict[str, 
     if not root_element:
         raise ValueError("Could not get root element")
 
-    async def build_node(element: WebElement) -> HTMLTreeNode:
+    async def build_node(element: WebElement) -> DOMElementNode:
         # Gather all element data in parallel
         tag_task = element.get_tag()
-        text_task = element.get_text()
         children_task = element.get_children()
         is_visible_task = element.is_visible()
 
@@ -26,14 +25,13 @@ async def extract_dom_structure(page: WebPage) -> Tuple[HTMLTreeNode, Dict[str, 
         attributes_task = element.get_attributes()
 
         # Wait for all data
-        tag, text, children, is_visible, attributes = await asyncio.gather(
-            tag_task, text_task, children_task, is_visible_task, attributes_task
+        tag, children, is_visible, attributes = await asyncio.gather(
+            tag_task, children_task, is_visible_task, attributes_task
         )
 
         # Create tree node
-        tree_node = HTMLTreeNode(
+        tree_node = DOMElementNode(
             tag=tag or "unknown",
-            text=text or "",
             attributes=attributes,
             is_visible=is_visible
         )
@@ -41,11 +39,16 @@ async def extract_dom_structure(page: WebPage) -> Tuple[HTMLTreeNode, Dict[str, 
         # Store mapping
         id_to_element[tree_node.id] = element
 
-        # Process children in parallel if any exist
+        # Process mixed children (WebElements and text strings)
         if children:
-            child_nodes = await asyncio.gather(*[build_node(child) for child in children])
-            for child_node in child_nodes:
-                tree_node.add_child(child_node)
+            for child in children:
+                if isinstance(child, str):
+                    # It's a text node
+                    tree_node.add_child(DOMTextNode(child))
+                else:
+                    # It's an element node - process recursively
+                    child_node = await build_node(child)
+                    tree_node.add_child(child_node)
 
         return tree_node
 

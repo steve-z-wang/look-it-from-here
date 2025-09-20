@@ -1,4 +1,4 @@
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Union
 from playwright.async_api import Page, Locator
 from .interfaces import WebElement, WebPage, Snapshot
 from .snapshot import WebSnapshot
@@ -29,30 +29,6 @@ class PlaywrightElement(WebElement):
         except Exception:
             return False
 
-    async def get_text(self) -> Optional[str]:
-        try:
-            # Get direct text nodes only (not from child elements)
-            result = await self.locator.evaluate("""
-                el => {
-                    const textNodes = [...el.childNodes]
-                        .filter(node => node.nodeType === Node.TEXT_NODE)
-                        .map(node => node.textContent)
-                        .join('');
-
-                    return textNodes.trim() || null;
-                }
-            """)
-            return result if result else None
-        except Exception:
-            return None
-
-    async def get_inner_text(self) -> Optional[str]:
-        """Get the complete inner text including text from all descendant elements."""
-        try:
-            result = await self.locator.evaluate("el => el.innerText")
-            return result.strip() if result and result.strip() else None
-        except Exception:
-            return None
 
     async def get_attributes(self) -> Dict[str, str]:
         """Get ALL attributes from the element."""
@@ -77,11 +53,41 @@ class PlaywrightElement(WebElement):
         except Exception:
             return None
 
-    async def get_children(self) -> List[WebElement]:
+    async def get_children(self) -> List[Union[WebElement, str]]:
+        """Get all child nodes including text nodes."""
         try:
-            child_locators = self.locator.locator("xpath=./*")
-            count = await child_locators.count()
-            return [PlaywrightElement(child_locators.nth(i)) for i in range(count)]
+            # Get information about all child nodes
+            children_info = await self.locator.evaluate("""
+                el => {
+                    const children = [];
+                    for (const node of el.childNodes) {
+                        if (node.nodeType === Node.TEXT_NODE) {
+                            const text = node.textContent;
+                            // Only include non-empty text nodes
+                            if (text && text.trim()) {
+                                children.push({type: 'text', content: text});
+                            }
+                        } else if (node.nodeType === Node.ELEMENT_NODE) {
+                            children.push({type: 'element', index: [...el.children].indexOf(node)});
+                        }
+                    }
+                    return children;
+                }
+            """)
+
+            # Build mixed list of WebElements and strings
+            result = []
+            element_locators = self.locator.locator("xpath=./*")
+
+            for child_info in children_info:
+                if child_info['type'] == 'text':
+                    result.append(child_info['content'])
+                elif child_info['type'] == 'element':
+                    index = child_info['index']
+                    if index >= 0:
+                        result.append(PlaywrightElement(element_locators.nth(index)))
+
+            return result
         except Exception:
             return []
 

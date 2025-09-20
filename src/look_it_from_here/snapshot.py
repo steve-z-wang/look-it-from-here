@@ -1,8 +1,8 @@
 from typing import Dict, Optional, Any
-from .html_tree_node import HTMLTreeNode
-from .html_display_node import HTMLDisplayNode
+from .dom_node import DOMElementNode
+from .semantic_node import SemanticElementNode
 from .interfaces import WebElement, Snapshot
-from .pipeline import display_tree_to_dict, display_tree_to_xml
+from .pipeline import display_tree_to_dict
 
 
 class WebSnapshot(Snapshot):
@@ -13,8 +13,8 @@ class WebSnapshot(Snapshot):
 
     def __init__(
         self,
-        html_tree: Optional[HTMLTreeNode],
-        semantic_tree: Optional[HTMLDisplayNode],
+        html_tree: Optional[DOMElementNode],
+        semantic_tree: Optional[SemanticElementNode],
         tree_to_element: Dict[str, WebElement],
         tree_to_display: Dict[str, str]
     ):
@@ -40,16 +40,6 @@ class WebSnapshot(Snapshot):
             return display_tree_to_dict(self.semantic_tree)
         return None
 
-    def to_xml(self) -> Optional[str]:
-        """
-        Convert the semantic tree to XML representation.
-
-        Returns:
-            XML string representation or None if no semantic tree
-        """
-        if self.semantic_tree:
-            return display_tree_to_xml(self.semantic_tree)
-        return None
 
     def get_element(self, display_node_id: str) -> Optional[WebElement]:
         """

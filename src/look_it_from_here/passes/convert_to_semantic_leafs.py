@@ -1,12 +1,12 @@
 from typing import Set
-from ..html_display_node import HTMLDisplayNode
+from ..semantic_node import SemanticElementNode, SemanticTextNode
 
 
 # Tags that should be treated as leaf nodes (children are not semantically meaningful)
 LEAF_TAGS: Set[str] = {'svg'}
 
 
-def convert_to_semantic_leafs_pass(display_node: HTMLDisplayNode) -> HTMLDisplayNode:
+def convert_to_semantic_leafs_pass(display_node: SemanticElementNode) -> SemanticElementNode:
     """
     Convert certain tags to leaf nodes by removing their children.
 
@@ -15,10 +15,10 @@ def convert_to_semantic_leafs_pass(display_node: HTMLDisplayNode) -> HTMLDisplay
     cleaner semantic trees.
 
     Args:
-        display_node: HTMLDisplayNode to process
+        display_node: SemanticElementNode to process
 
     Returns:
-        HTMLDisplayNode with specified tags converted to leaf nodes
+        SemanticElementNode with specified tags converted to leaf nodes
     """
     # For leaf tags, don't process children - treat as leaf nodes
     if display_node.tag in LEAF_TAGS:
@@ -29,8 +29,13 @@ def convert_to_semantic_leafs_pass(display_node: HTMLDisplayNode) -> HTMLDisplay
     # For non-leaf tags, recursively process children
     processed_children = []
     for child in display_node.children:
-        processed_child = convert_to_semantic_leafs_pass(child)
-        processed_children.append(processed_child)
+        if isinstance(child, SemanticElementNode):
+            # Process element children recursively
+            processed_child = convert_to_semantic_leafs_pass(child)
+            processed_children.append(processed_child)
+        elif isinstance(child, SemanticTextNode):
+            # Keep text nodes as-is
+            processed_children.append(child)
 
     # Create new node with processed children
     processed_node = display_node.copy(include_children=False)

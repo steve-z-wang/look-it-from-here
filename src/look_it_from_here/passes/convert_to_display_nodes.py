@@ -1,9 +1,9 @@
 from typing import Optional, Tuple, Dict
-from ..html_tree_node import HTMLTreeNode
-from ..html_display_node import HTMLDisplayNode
+from ..dom_node import DOMElementNode, DOMTextNode
+from ..semantic_node import SemanticElementNode, SemanticTextNode
 
 
-def convert_to_display_nodes_pass(node: HTMLTreeNode) -> Tuple[Optional[HTMLDisplayNode], Dict[str, str]]:
+def convert_to_display_nodes_pass(node: DOMElementNode) -> Tuple[Optional[SemanticElementNode], Dict[str, str]]:
     """
     Convert HTMLTreeNode tree to HTMLDisplayNode tree using appropriate renderers.
     Also creates a mapping from HTMLTreeNode IDs to HTMLDisplayNode IDs.
@@ -22,7 +22,7 @@ def convert_to_display_nodes_pass(node: HTMLTreeNode) -> Tuple[Optional[HTMLDisp
     # Mapping from HTMLTreeNode ID to HTMLDisplayNode ID
     tree_to_display_mapping = {}
 
-    def filter_attributes(tree_node: HTMLTreeNode) -> list:
+    def filter_attributes(tree_node: DOMElementNode) -> list:
         """Filter attributes based on semantic relevance for the element type."""
         # Define semantic attributes by element type
         semantic_attributes = {
@@ -82,24 +82,26 @@ def convert_to_display_nodes_pass(node: HTMLTreeNode) -> Tuple[Optional[HTMLDisp
         return filtered_attributes
 
 
-    def render_node_recursive(tree_node: HTMLTreeNode) -> Optional[HTMLDisplayNode]:
-        # Get text directly from tree node
-        text = tree_node.text if tree_node.text else None
-
+    def render_node_recursive(tree_node: DOMElementNode) -> Optional[SemanticElementNode]:
         # Filter attributes based on semantic relevance
         filtered_attributes = filter_attributes(tree_node)
 
-        # Create display node with tag, text, and filtered attributes
-        display_node = HTMLDisplayNode(tag=tree_node.tag, text=text, attributes=filtered_attributes)
+        # Create display node with tag and filtered attributes
+        display_node = SemanticElementNode(tag=tree_node.tag, attributes=filtered_attributes)
 
         # Store the mapping
         tree_to_display_mapping[tree_node.id] = display_node.id
 
-        # Process children recursively
+        # Process mixed children
         for child in tree_node.children:
-            child_display = render_node_recursive(child)
-            if child_display:
-                display_node.add_child(child_display)
+            if isinstance(child, DOMTextNode):
+                # Convert text node
+                display_node.add_child(SemanticTextNode(child.content))
+            elif isinstance(child, DOMElementNode):
+                # Convert element node recursively
+                child_display = render_node_recursive(child)
+                if child_display:
+                    display_node.add_child(child_display)
 
         return display_node
 

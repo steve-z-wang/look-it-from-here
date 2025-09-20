@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Union
 
 
 class WebElement(ABC):
@@ -16,14 +16,6 @@ class WebElement(ABC):
         pass
 
     @abstractmethod
-    async def get_text(self) -> Optional[str]:
-        pass
-
-    @abstractmethod
-    async def get_inner_text(self) -> Optional[str]:
-        pass
-
-    @abstractmethod
     async def get_attributes(self) -> Dict[str, str]:
         pass
 
@@ -32,7 +24,8 @@ class WebElement(ABC):
         pass
 
     @abstractmethod
-    async def get_children(self) -> List['WebElement']:
+    async def get_children(self) -> List[Union['WebElement', str]]:
+        """Get child nodes - returns WebElements for element nodes and strings for text nodes."""
         pass
 
 class Snapshot(ABC):
