@@ -9,7 +9,7 @@ SEMANTIC_ATTRIBUTES = {
     'title', 'alt',
 
     # Form semantics (essential only)
-    'name', 'type', 'value', 'placeholder',
+    'type', 'value', 'placeholder',
 }
 
 # Interactive HTML elements that should NEVER be collapsed
