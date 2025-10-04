@@ -41,7 +41,6 @@
                       "tag": "textarea",
                       "title": "Search",
                       "aria-label": "Search",
-                      "name": "q",
                       "role": "combobox"
                     },
                     {
@@ -107,7 +106,6 @@
                       "tag": "input",
                       "value": "Google Search",
                       "aria-label": "Google Search",
-                      "name": "btnK",
                       "role": "button",
                       "type": "submit"
                     },
@@ -115,7 +113,6 @@
                       "tag": "input",
                       "value": "I'm Feeling Lucky",
                       "aria-label": "I'm Feeling Lucky",
-                      "name": "btnI",
                       "role": "button",
                       "type": "submit"
                     },
