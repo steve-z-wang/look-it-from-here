@@ -1,5 +1,5 @@
 from typing import Optional
-from ..dom_node import DOMElementNode, DOMTextNode
+from ...dom_node import DOMElementNode, DOMTextNode
 
 
 # Tags that should be excluded from display

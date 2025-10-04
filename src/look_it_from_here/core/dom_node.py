@@ -7,7 +7,7 @@ type DOMNode = Union['DOMElementNode', 'DOMTextNode']
 @dataclass
 class DOMTextNode:
     """Represents a text node in the DOM tree."""
-    content: str
+    text: str
 
 
 class DOMElementNode:
@@ -48,7 +48,7 @@ class DOMElementNode:
             if isinstance(child, DOMElementNode):
                 children_data.append(child.to_dict())
             elif isinstance(child, DOMTextNode):
-                children_data.append({'type': 'text', 'content': child.content})
+                children_data.append({'type': 'text', 'content': child.text})
 
         return {
             'id': self.id,
@@ -72,7 +72,7 @@ class DOMElementNode:
                     child_copy = child.copy(include_children=True)
                     new_node.add_child(child_copy)
                 elif isinstance(child, DOMTextNode):
-                    new_node.add_child(DOMTextNode(child.content))
+                    new_node.add_child(DOMTextNode(text=child.text))
 
         return new_node
 

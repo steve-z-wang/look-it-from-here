@@ -1,7 +1,7 @@
 import asyncio
 from typing import Dict, Tuple
-from ..dom_node import DOMElementNode, DOMTextNode
-from ..interfaces import WebPage, WebElement
+from ...dom_node import DOMElementNode, DOMTextNode
+from ...interfaces import WebPage, WebElement
 
 
 async def extract_dom_structure(page: WebPage) -> Tuple[DOMElementNode, Dict[str, WebElement]]:
@@ -44,7 +44,7 @@ async def extract_dom_structure(page: WebPage) -> Tuple[DOMElementNode, Dict[str
             for child in children:
                 if isinstance(child, str):
                     # It's a text node
-                    tree_node.add_child(DOMTextNode(child))
+                    tree_node.add_child(DOMTextNode(text=child))
                 else:
                     # It's an element node - process recursively
                     child_node = await build_node(child)

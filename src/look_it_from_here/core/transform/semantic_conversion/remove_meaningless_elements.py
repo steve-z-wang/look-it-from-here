@@ -1,5 +1,6 @@
 from typing import Optional
-from ..semantic_node import SemanticElementNode, SemanticTextNode, SemanticNode
+from ...semantic_node import SemanticElementNode, SemanticTextNode, SemanticNode
+from ...constants import INTERACTIVE_ELEMENTS
 
 
 def remove_empty_elements(node: SemanticElementNode) -> Optional[SemanticElementNode]:
@@ -10,7 +11,7 @@ def remove_empty_elements(node: SemanticElementNode) -> Optional[SemanticElement
     """
     # Process children
     filtered_children = []
-    for child in node.children:
+    for child in node.content:
         if isinstance(child, SemanticElementNode):
             # Recursively process element children
             filtered_child = remove_empty_elements(child)
@@ -25,8 +26,9 @@ def remove_empty_elements(node: SemanticElementNode) -> Optional[SemanticElement
     for child in filtered_children:
         result.add_child(child)
 
-    # If this node has no semantic value and no children, remove it
-    if not result.has_semantic_value() and not result.children:
+    # If this node has no attributes and no children, remove it
+    # (empty elements like <div></div> with no attributes)
+    if not result.attributes and not result.content:
         return None
 
     return result
@@ -37,12 +39,14 @@ def remove_meaningless_wrappers(node: SemanticElementNode) -> SemanticNode:
     Remove elements that have exactly one child and no semantic value.
 
     These are unnecessary wrapper elements that don't add meaning.
+    This includes spans/divs that only contain text without any attributes.
     """
     # First, recursively process all element children
     processed_children = []
-    for child in node.children:
+    for child in node.content:
         if isinstance(child, SemanticElementNode):
             processed_child = remove_meaningless_wrappers(child)
+            # The processed child might now be a text node if wrapper was removed
             processed_children.append(processed_child)
         elif isinstance(child, SemanticTextNode):
             processed_children.append(child)
@@ -52,9 +56,10 @@ def remove_meaningless_wrappers(node: SemanticElementNode) -> SemanticNode:
     for child in processed_children:
         result.add_child(child)
 
-    # Apply collapse rule: element with 1 child and no semantic value
-    if len(result.children) == 1 and not result.has_semantic_value():
-        return result.children[0]
+    # Apply collapse rule: element with 1 child and no attributes
+    # BUT preserve interactive elements even without attributes
+    if len(result.content) == 1 and not result.attributes and result.tag.lower() not in INTERACTIVE_ELEMENTS:
+        return result.content[0]
 
     return result
 

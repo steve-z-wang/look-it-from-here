@@ -1,8 +1,8 @@
 from typing import List, Optional, Dict, Union
 from playwright.async_api import Page, Locator
-from .interfaces import WebElement, WebPage, Snapshot
-from .snapshot import WebSnapshot
-from .pipeline import create_html_tree, create_semantic_tree
+from ..core.interfaces import WebElement, WebPage, Snapshot
+from ..core.snapshot import WebSnapshot
+from ..core.transform import create_html_tree, create_semantic_tree
 
 
 class PlaywrightElement(WebElement):

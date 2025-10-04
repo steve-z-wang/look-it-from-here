@@ -1,4 +1,4 @@
-from ..dom_node import DOMElementNode, DOMTextNode
+from ...dom_node import DOMElementNode, DOMTextNode
 
 
 def propagate_visibility_pass(node: DOMElementNode) -> DOMElementNode:

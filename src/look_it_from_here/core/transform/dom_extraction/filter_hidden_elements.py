@@ -1,5 +1,5 @@
 from typing import Optional
-from ..dom_node import DOMElementNode, DOMTextNode
+from ...dom_node import DOMElementNode, DOMTextNode
 
 
 def filter_hidden_elements_pass(node: DOMElementNode) -> Optional[DOMElementNode]:
