@@ -22,16 +22,9 @@ class SemanticElementNode:
         self.tag = tag
         self.attributes = attributes or []  # HTML attributes (aria-label, role, type, etc.)
         self.content: List[SemanticNode] = content or []
-        self.parent: Optional['SemanticElementNode'] = None
-
-        for child in self.content:
-            if isinstance(child, SemanticElementNode):
-                child.parent = self
 
     def add_child(self, child: SemanticNode) -> None:
         self.content.append(child)
-        if isinstance(child, SemanticElementNode):
-            child.parent = self
 
     def get_element_children(self) -> List['SemanticElementNode']:
         """Get only element children (SemanticNode instances)."""

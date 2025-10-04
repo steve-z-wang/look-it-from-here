@@ -23,16 +23,9 @@ class DOMElementNode:
         self.attributes = attributes or {}
         self.children: List[DOMNode] = children or []
         self.is_visible = is_visible
-        self.parent: Optional['DOMElementNode'] = None
-
-        for child in self.children:
-            if isinstance(child, DOMElementNode):
-                child.parent = self
 
     def add_child(self, child: DOMNode) -> None:
         self.children.append(child)
-        if isinstance(child, DOMElementNode):
-            child.parent = self
 
     def get_element_children(self) -> List['DOMElementNode']:
         """Get only element children (DOMNode instances)."""
