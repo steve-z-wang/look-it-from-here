@@ -15,12 +15,14 @@ class WebSnapshot(Snapshot):
         html_tree: Optional[DOMElementNode],
         semantic_tree: Optional[SemanticElementNode],
         tree_to_element: Dict[str, WebElement],
-        tree_to_semantic: Dict[str, str]
+        tree_to_semantic: Dict[str, str],
+        semantic_to_embedding: Optional[Dict[str, List[float]]] = None
     ):
         self.html_tree = html_tree
         self.semantic_tree = semantic_tree
         self.tree_to_element = tree_to_element
         self.tree_to_semantic = tree_to_semantic
+        self.semantic_to_embedding = semantic_to_embedding or {}
 
         # Build semantic_to_element mapping
         self.semantic_to_element: Dict[str, WebElement] = {}
@@ -83,3 +85,15 @@ class WebSnapshot(Snapshot):
             WebElement or None if not found
         """
         return self.semantic_to_element.get(semantic_node_id)
+
+    def get_embedding(self, semantic_node_id: str) -> Optional[List[float]]:
+        """
+        Get the embedding vector corresponding to a semantic node ID.
+
+        Args:
+            semantic_node_id: ID of the semantic node
+
+        Returns:
+            Embedding vector or None if not found
+        """
+        return self.semantic_to_embedding.get(semantic_node_id)

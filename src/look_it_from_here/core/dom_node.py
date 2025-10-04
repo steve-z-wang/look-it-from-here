@@ -1,16 +1,24 @@
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Optional, Any
 import uuid
-from dataclasses import dataclass
+from abc import ABC
 
-type DOMNode = Union['DOMElementNode', 'DOMTextNode'] 
 
-@dataclass
-class DOMTextNode:
+class DOMNode(ABC):
+    """Base class for all DOM nodes."""
+
+    def __init__(self):
+        self.id = str(uuid.uuid4())
+
+
+class DOMTextNode(DOMNode):
     """Represents a text node in the DOM tree."""
-    text: str
+
+    def __init__(self, text: str):
+        super().__init__()
+        self.text = text
 
 
-class DOMElementNode:
+class DOMElementNode(DOMNode):
     def __init__(
         self,
         tag: str,
@@ -18,7 +26,7 @@ class DOMElementNode:
         children: Optional[List[DOMNode]] = None,
         is_visible: bool = True
     ):
-        self.id = str(uuid.uuid4())
+        super().__init__()
         self.tag = tag
         self.attributes = attributes or {}
         self.children: List[DOMNode] = children or []

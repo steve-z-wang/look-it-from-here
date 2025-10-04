@@ -1,24 +1,31 @@
-from typing import List, Optional, Dict, Any, Union
+from typing import List, Optional, Dict, Any
 import uuid
-from dataclasses import dataclass
+from abc import ABC
 
 
-type SemanticNode = Union['SemanticElementNode', 'SemanticTextNode']
+class SemanticNode(ABC):
+    """Base class for all semantic nodes."""
 
-@dataclass
-class SemanticTextNode:
-    """Represents a text node in the DOM tree."""
-    text: str
+    def __init__(self):
+        self.id = str(uuid.uuid4())
+
+
+class SemanticTextNode(SemanticNode):
+    """Represents a text node in the semantic tree."""
+
+    def __init__(self, text: str):
+        super().__init__()
+        self.text = text
     
 
-class SemanticElementNode:
+class SemanticElementNode(SemanticNode):
     def __init__(
         self,
         tag: str,
         attributes: Optional[List[tuple]] = None,
         content: Optional[List[SemanticNode]] = None
     ):
-        self.id = str(uuid.uuid4())
+        super().__init__()
         self.tag = tag
         self.attributes = attributes or []  # HTML attributes (aria-label, role, type, etc.)
         self.content: List[SemanticNode] = content or []
