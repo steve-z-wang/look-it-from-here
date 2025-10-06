@@ -12,6 +12,7 @@ authors = [
 requires-python = ">=3.8"
 dependencies = [
     "playwright>=1.40.0",
+    "numpy>=1.20.0",
 ]
 
 [project.optional-dependencies]

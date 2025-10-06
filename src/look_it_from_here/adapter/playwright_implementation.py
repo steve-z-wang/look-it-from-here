@@ -2,7 +2,8 @@ from typing import List, Optional, Dict, Union
 from playwright.async_api import Page, Locator
 from ..core.interfaces import WebElement, WebPage, Snapshot
 from ..core.snapshot import WebSnapshot
-from ..core.transform import create_html_tree, create_semantic_tree
+from ..core.transform import create_html_tree, create_semantic_tree, create_embeddings_from_semantic_tree
+from ..core.embeddings import Embedder
 
 
 class PlaywrightElement(WebElement):
@@ -135,5 +136,11 @@ class PlaywrightPage(WebPage):
         else:
             semantic_tree, node_mapping = None, {}
 
+        # Generate embeddings for semantic tree
+        semantic_to_embedding = None
+        if semantic_tree:
+            embedder = Embedder()
+            semantic_to_embedding = create_embeddings_from_semantic_tree(semantic_tree, embedder)
+
         # Create and return snapshot
-        return WebSnapshot(html_tree, semantic_tree, element_mapping, node_mapping)
+        return WebSnapshot(html_tree, semantic_tree, element_mapping, node_mapping, semantic_to_embedding)

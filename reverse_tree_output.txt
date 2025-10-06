@@ -1,0 +1,279 @@
+REVERSE TREE TEST OUTPUT
+================================================================================
+
+Target Button Details:
+- Tag: div
+- ID: 121616bb-a668-47bd-90d0-8df53b4113c7
+- Attributes: [('aria-label', 'Search by voice'), ('role', 'button')]
+- Content: []
+
+REVERSE TREE STRUCTURE:
+================================================================================
+
+This is a web element represented as a reverse tree structure for natural language web automation. The reverse tree places the target element at the root while preserving its hierarchical context through a parent chain.
+
+Structure explanation:
+- Root element: The target web element that can be interacted with
+- "content": Direct children and text content of the target element
+- "parent": Hierarchical chain showing containers and context
+- "_FOCUS_ELEMENT_": Marker showing where the target element (or its ancestor) sits among siblings at each level of the parent chain
+
+Use this structure to match natural language queries like:
+- "click the submit button"
+- "fill the email field in the login form"
+- "find the search button in the header"
+- "click the add to cart button for wireless headphones"
+
+The _FOCUS_ELEMENT_ markers trace the path from target to root, showing spatial relationships and context at each level.
+
+Match based on element semantics, text content, hierarchy, and spatial relationships.
+
+Element description:
+{
+  "tag": "div",
+  "aria-label": "Search by voice",
+  "role": "button",
+  "parent": {
+    "tag": "div",
+    "content": [
+      "_FOCUS_ELEMENT_",
+      {
+        "tag": "div",
+        "aria-label": "Search by image",
+        "role": "button"
+      }
+    ],
+    "parent": {
+      "tag": "div",
+      "content": [
+        "_FOCUS_ELEMENT_",
+        {
+          "tag": "button",
+          "role": "link",
+          "type": "button",
+          "content": [
+            "AI Mode"
+          ]
+        }
+      ],
+      "parent": {
+        "tag": "div",
+        "content": [
+          {
+            "tag": "textarea",
+            "title": "Search",
+            "aria-label": "Search",
+            "role": "combobox"
+          },
+          "_FOCUS_ELEMENT_"
+        ],
+        "parent": {
+          "tag": "div",
+          "content": [
+            "_FOCUS_ELEMENT_",
+            {
+              "tag": "div",
+              "content": [
+                {
+                  "tag": "div",
+                  "aria-label": "Choose what you\u2019re giving feedback on",
+                  "role": "dialog",
+                  "content": [
+                    {
+                      "tag": "div",
+                      "role": "heading",
+                      "content": [
+                        "Choose what you\u2019re giving feedback on"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "role": "button",
+                  "content": [
+                    "Report inappropriate predictions"
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "center",
+              "content": [
+                {
+                  "tag": "input",
+                  "value": "Google Search",
+                  "aria-label": "Google Search",
+                  "role": "button",
+                  "type": "submit"
+                },
+                {
+                  "tag": "input",
+                  "value": "I'm Feeling Lucky",
+                  "aria-label": "I'm Feeling Lucky",
+                  "role": "button",
+                  "type": "submit"
+                },
+                {
+                  "tag": "div",
+                  "role": "button"
+                }
+              ]
+            }
+          ],
+          "parent": {
+            "tag": "form",
+            "role": "search",
+            "content": [
+              "_FOCUS_ELEMENT_"
+            ],
+            "parent": {
+              "tag": "div",
+              "content": [
+                {
+                  "tag": "div",
+                  "role": "navigation",
+                  "content": [
+                    {
+                      "tag": "a",
+                      "content": [
+                        "About"
+                      ]
+                    },
+                    {
+                      "tag": "a",
+                      "content": [
+                        "Store"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "svg",
+                  "aria-label": "Google",
+                  "role": "img"
+                },
+                "_FOCUS_ELEMENT_",
+                {
+                  "tag": "div",
+                  "role": "contentinfo",
+                  "content": [
+                    {
+                      "tag": "div",
+                      "content": [
+                        {
+                          "tag": "div",
+                          "content": [
+                            {
+                              "tag": "a",
+                              "content": [
+                                "Advertising"
+                              ]
+                            },
+                            {
+                              "tag": "a",
+                              "content": [
+                                "Business"
+                              ]
+                            },
+                            {
+                              "tag": "a",
+                              "content": [
+                                " How Search works "
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "a",
+                          "content": [
+                            "Applying AI towards science and the environment"
+                          ]
+                        },
+                        {
+                          "tag": "div",
+                          "content": [
+                            {
+                              "tag": "a",
+                              "content": [
+                                "Privacy"
+                              ]
+                            },
+                            {
+                              "tag": "a",
+                              "content": [
+                                "Terms"
+                              ]
+                            },
+                            {
+                              "tag": "g-popup",
+                              "content": [
+                                {
+                                  "tag": "div",
+                                  "role": "button",
+                                  "content": [
+                                    "Settings"
+                                  ]
+                                },
+                                {
+                                  "tag": "g-menu",
+                                  "role": "menu"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "parent": {
+                "tag": "body",
+                "content": [
+                  "_FOCUS_ELEMENT_",
+                  "Google apps",
+                  {
+                    "tag": "div",
+                    "role": "dialog",
+                    "content": [
+                      {
+                        "tag": "div",
+                        "content": [
+                          "Sign in to Google",
+                          "Get the most from your Google account",
+                          {
+                            "tag": "div",
+                            "content": [
+                              {
+                                "tag": "div",
+                                "role": "button",
+                                "content": [
+                                  "Stay signed out"
+                                ]
+                              },
+                              {
+                                "tag": "div",
+                                "role": "button",
+                                "content": [
+                                  "Sign in"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+================================================================================
+END OF REVERSE TREE OUTPUT

@@ -1,5 +1,6 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 from ...semantic_node import SemanticElementNode, SemanticTextNode
+from ...embeddings import Embedder
 from .reverse_tree_node import ReverseTreeElementNode, ReverseTreeTextNode, ReverseTreeMarkerNode
 
 
@@ -115,35 +116,56 @@ def generate_reverse_tree(target_node: SemanticElementNode, semantic_tree: Seman
     return reverse_tree
 
 
-def create_embedding_from_text(text: str) -> List[float]:
+def create_embedding_from_text(text: str, embedder: Optional[Embedder] = None) -> List[float]:
     """
     Create embedding vector from text representation.
 
     Args:
         text: Text representation of reverse tree
+        embedder: Embedder instance to use. If None, creates a new one.
 
     Returns:
-        Embedding vector (placeholder implementation with dummy values)
+        Embedding vector
     """
-    # TODO: Replace with actual embedding model (e.g., OpenAI, Sentence Transformers, etc.)
-    # For now, return a dummy embedding vector
-    return [0.1] * 384  # Common embedding dimension
+    if embedder is None:
+        embedder = Embedder()
+
+    return embedder.create_embedding(text)
 
 
-def create_embeddings_from_semantic_tree(semantic_tree: SemanticElementNode) -> Dict[str, List[float]]:
+def create_embeddings_from_semantic_tree(semantic_tree: SemanticElementNode, embedder: Optional[Embedder] = None) -> Tuple[Dict[str, List[float]], Dict[str, ReverseTreeElementNode]]:
     """
     Create embeddings for all elements in a semantic tree.
 
     Args:
         semantic_tree: Root of the semantic tree
+        embedder: Embedder instance to use. If None, creates a new one.
 
     Returns:
-        Dictionary mapping semantic_node_id to embedding vector
+        Tuple of (embeddings_dict, reverse_trees_dict) mapping semantic_node_id to embedding vector and reverse tree node
     """
+    if embedder is None:
+        embedder = Embedder()
+
     embeddings = {}
+    reverse_trees = {}
+    total_nodes = 0
+    processed_nodes = 0
+
+    # Count total nodes first
+    def count_nodes(node: SemanticElementNode):
+        nonlocal total_nodes
+        total_nodes += 1
+        for child in node.content:
+            if isinstance(child, SemanticElementNode):
+                count_nodes(child)
+
+    count_nodes(semantic_tree)
+    print(f"🔍 Processing {total_nodes} elements for embedding generation...")
 
     def traverse_and_embed(node: SemanticElementNode):
         """Recursively traverse tree and create embeddings."""
+        nonlocal processed_nodes
 
         # Generate reverse tree for this node
         reverse_tree = generate_reverse_tree(node, semantic_tree)
@@ -152,10 +174,15 @@ def create_embeddings_from_semantic_tree(semantic_tree: SemanticElementNode) -> 
         text_representation = reverse_tree.to_text()
 
         # Generate embedding
-        embedding_vector = create_embedding_from_text(text_representation)
+        embedding_vector = create_embedding_from_text(text_representation, embedder)
 
-        # Store mapping
+        # Store mappings
         embeddings[node.id] = embedding_vector
+        reverse_trees[node.id] = reverse_tree
+
+        processed_nodes += 1
+        if processed_nodes % 5 == 0 or processed_nodes == total_nodes:
+            print(f"✅ Generated {processed_nodes}/{total_nodes} embeddings")
 
         # Process children
         for child in node.content:
@@ -165,4 +192,5 @@ def create_embeddings_from_semantic_tree(semantic_tree: SemanticElementNode) -> 
     # Start traversal from root
     traverse_and_embed(semantic_tree)
 
-    return embeddings
+    print(f"🎉 Completed embedding generation for {total_nodes} elements")
+    return embeddings, reverse_trees
